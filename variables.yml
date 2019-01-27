@@ -1,0 +1,28 @@
+---
+# Environment Variales
+data_loc: "/data/"
+hadoop_home: "~/hadoop-2.9.2"
+java_home: "/etc/alternatives/java_sdk"
+
+# Hadoop setup
+hadoop_host_count: "{{ ansible_play_hosts | length }}"
+hadoop_master: master1
+hadoop_master_port: {
+  dfs: 9000,
+  dfs_web: 50010,
+  yarn_scheduler: 8030,
+  yarn_track: 8031,
+  yarn: 8032,
+  yarn_admin: 8033,
+  yarn_web: 8089
+}
+hadoop_dfs_replication: 3
+yarn_setting:
+  - { key: "yarn.nodemanager.resource.memory-mb", value: "{{ (ansible_memtotal_mb*0.8)|int|abs }}" }
+  - { key: "yarn.scheduler.maximum-allocation-mb", value: "{{ (ansible_memtotal_mb*0.8)|int|abs }}" }
+  - { key: "yarn.scheduler.minimum-allocation-mb", value: "{{ (ansible_memtotal_mb*0.1)|int|abs }}" }
+  - { key: "yarn.nodemanager.vmem-check-enabled", value: "False" }
+mapreduce_setting:
+  - { key: "yarn.app.mapreduce.am.resource.mb", value: "{{ (ansible_memtotal_mb*0.5)|int|abs }}" }
+  - { key: "mapreduce.map.memory.mb", value: "{{ (ansible_memtotal_mb*0.45)|int|abs }}" }
+  - { key: "mapreduce.reduce.memory.mb", value: "{{ (ansible_memtotal_mb*0.45)|int|abs }}" }

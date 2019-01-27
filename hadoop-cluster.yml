@@ -1,0 +1,56 @@
+---
+- name: Hadoop Cluster Setup
+  hosts: all
+  tasks:
+  - name: Import Variables
+    include_vars: variables.yml
+  - name: Verify hadoop Path
+    stat:
+      path: "{{ hadoop_home }}"
+    register: hadoop_stat
+  - name: Download from master node if hadoop folder not found
+    copy:
+      src: /opt/
+  - name: Create user hfds folder
+    file:
+      path: '{{ item }}'
+      state: directory
+      owner: '{{ ansible_user_id }}'
+      group: '{{ ansible_user_id }}'
+    with_items:
+      - "/data/{{ ansible_user_id }}"
+      - "/data/{{ ansible_user_id }}/dataNode"
+      - "/data/{{ ansible_user_id }}/nameNode"
+  - name: Set JAVA_HOME in hadoop-env.sh in RH
+    lineinfile:
+      dest: "{{ hadoop_home }}/etc/hadoop/hadoop-env.sh"
+      regexp: "JAVA_HOME="
+      line: "export JAVA_HOME={{ java_home }}"
+    when: "ansible_os_family == 'RedHat'"
+  - name: Defined Core setting in "{{ hadoop_home }}/etc/hadoop/core-site.xml"
+    template:
+      src: templates/core-site.xml
+      dest: "{{ hadoop_home }}/etc/hadoop/core-site.xml"
+  - name: Defined HDFS setting in "{{ hadoop_home }}/etc/hadoop/hdfs-site.xml"
+    template:
+      src: templates/hdfs-site.xml
+      dest: "{{ hadoop_home }}/etc/hadoop/hdfs-site.xml"
+  - name: Defined YARN setting in "{{ hadoop_home }}/etc/hadoop/yarn-site.xml"
+    template:
+      src: templates/yarn-site.xml
+      dest: "{{ hadoop_home }}/etc/hadoop/yarn-site.xml"
+  - name: Defined MAPRED setting in "{{ hadoop_home }}/etc/hadoop/mapred-site.xml"
+    template:
+      src: templates/mapred-site.xml
+      dest: "{{ hadoop_home }}/etc/hadoop/mapred-site.xml"
+  - name: Defined SLAVES in "{{ hadoop_home }}/etc/hadoop/slaves"
+    template:
+      src: templates/slaves
+      dest: "{{ hadoop_home }}/etc/hadoop/slaves"
+  - name: Check namenode FS system created
+    stat:
+      path: "/data/{{ ansible_user_id }}/nameNode/current/VERSION"
+    register: namenode_fs
+  - name: Format NameNode FS system if required
+    shell: "{{ hadoop_home }}/bin/hdfs namenode -format"
+    when: namenode_fs.stat.exists == false and ansible_hostname in groups['namenode']

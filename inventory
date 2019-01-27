@@ -1,0 +1,7 @@
+[namenode]
+master1
+
+[datanode]
+hadoop1
+hadoop2
+hadoop3
