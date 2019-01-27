@@ -4,13 +4,21 @@
   tasks:
   - name: Import Variables
     include_vars: variables.yml
-  - name: Verify hadoop Path
+  - name: Verify hadoop home path
     stat:
       path: "{{ hadoop_home }}"
     register: hadoop_stat
-  - name: Download from master node if hadoop folder not found
-    copy:
-      src: /opt/
+  - name: Create hadoop home folder
+    file:
+      path: '{{ hadoop_home }}'
+      state: directory
+    when: hadoop_stat.stat.exists == False
+  - name: Copy and Extract if hadoop_home not found
+    unarchive:
+      src: "/opt/packages/hadoop-2.9.2.tgz"
+      dest: "{{ hadoop_home }}"
+      remote_src: no
+    when: hadoop_stat.stat.exists == False
   - name: Create user hfds folder
     file:
       path: '{{ item }}'
