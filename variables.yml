@@ -5,7 +5,6 @@ hadoop_home: "~/hadoop-2.9.2"
 java_home: "/etc/alternatives/java_sdk"
 
 # Hadoop setup
-hadoop_host_count: "{{ ansible_play_hosts | length }}"
 hadoop_master: master1
 hadoop_master_port: {
   dfs: 9000,
