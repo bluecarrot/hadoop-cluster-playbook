@@ -5,7 +5,8 @@ hadoop_home: "~/hadoop-2.9.2"
 java_home: "/etc/alternatives/java_sdk"
 
 # Hadoop setup
-hadoop_master: master1
+hadoop_package: "/opt/packages/hadoop-2.9.2.tgz"
+hadoop_master: master
 hadoop_master_port: {
   dfs: 9000,
   dfs_web: 50070,

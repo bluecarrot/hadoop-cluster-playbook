@@ -15,7 +15,7 @@
     when: hadoop_stat.stat.exists == False
   - name: Copy and Extract if hadoop_home not found
     unarchive:
-      src: "/opt/packages/hadoop-2.9.2.tgz"
+      src: "{{ hadoop_package }}"
       dest: "{{ hadoop_home }}"
       remote_src: no
     when: hadoop_stat.stat.exists == False

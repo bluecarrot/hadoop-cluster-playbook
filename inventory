@@ -1,7 +1,7 @@
 [namenode]
-master1
+master
 
 [datanode]
-hadoop1
-hadoop2
-hadoop3
+slave1
+slave2
+slave3
